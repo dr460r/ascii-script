@@ -7,9 +7,6 @@ import System.IO (stdout, hFlush)
 
 import System.Console.ANSI
 
-clear :: IO ()
-clear = putStr "\ESC[2J"
-
 renderMap :: [[MapCell]] -> IO ()
 renderMap mp = do
     clearScreen
