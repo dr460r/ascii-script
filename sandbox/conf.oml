@@ -1,0 +1,11 @@
+# THIS IS A COMMENT
+# Data types: num, str, bool, arr
+
+[square]
+width: num
+height: num
+
+[array]
+label: str
+elements: arr
+

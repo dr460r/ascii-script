@@ -2,10 +2,10 @@ module Game.Renderer
 ( renderMap )
 where
 
+import System.Console.ANSI
 import Game.Map ( MapCell )
 import System.IO (stdout, hFlush)
 
-import System.Console.ANSI
 
 renderMap :: [[MapCell]] -> IO ()
 renderMap mp = do
