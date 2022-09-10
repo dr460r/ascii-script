@@ -1,0 +1,7 @@
+Terrain
+ |- Land
+ |   |- Arable    (Land that can be used for planting Crops)
+ |   |- NonArable (Land that can't be use for planting Crops)
+ |- Water
+     |- Fresh (Land water, lakes, rivers, etc.)
+     |- Salty (Sea, ocean)
