@@ -13,7 +13,7 @@ setColor :: MapTile -> IO ()
 setColor (Water Fresh, _, _, _) = setSGR [SetColor Background Vivid Cyan]
 setColor (Land Arable, _, _, _) = setSGR [SetColor Background Dull Green]
 setColor (_, Crop _, _, _) = setSGR [SetColor Background Dull Green]
-setColor _ = setSGR [SetColor Background Dull Green] -- catch all
+setColor _ = resetColor -- catch all
 
 resetColor :: IO ()
 resetColor = setSGR [Reset]
