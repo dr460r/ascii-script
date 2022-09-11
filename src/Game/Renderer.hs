@@ -97,22 +97,18 @@ setColor _ = resetColor
 
 
 {- Character Mappings -}
-
 strForTile :: MapTile -> String
 
 -- Crop
 strForTile (_, Crop x, _, _)
-        | x' == 1 = "  "
-        | x' == 2 = " ."
-        | x' == 3 = ".."
-        | x' == 4 = ".:"
-        | x' == 5 = "::,"
-        | x' == 6 = ":l"
-        | x' == 7 = "ll"
-        | x' == 8 = "lf"
-        | x' == 9 = "ff"
-        | x' == 0 = "##"
-        where x' = x `mod` 10
-
+        | x == 0 = ". "
+        | x == 1 = ".."
+        | x == 2 = ",,"
+        | x == 3 = "::"
+        | x == 4 = ";;"
+        | x == 5 = "ii"
+        | x == 6 = "ll"
+        | x == 7 = "$$"
+        | x == 8 = "##"
 -- catch-all
 strForTile _ = "  "
