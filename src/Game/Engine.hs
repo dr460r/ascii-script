@@ -13,7 +13,7 @@ cropPrice :: Int
 baseCropYield :: Int
 
 cropPrice = 70
-baseCropYield = 1
+baseCropYield = 0
 
 
 {- Main Loop -}
