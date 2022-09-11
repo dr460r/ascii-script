@@ -8,6 +8,13 @@ import Data.List.Split ( splitOn )
 import Game.Renderer ( render )
 import Game.Data.Map
 
+{- Conf -}
+cropPrice :: Int
+baseCropYield :: Int
+
+cropPrice = 70
+baseCropYield = 1
+
 
 {- Main Loop -}
 update :: GameState -> String -> IO ()
@@ -31,12 +38,12 @@ updateMap st@(mp, _) = updateTile st (getTile mp p) p where p = (0,0)
 {- Update Tiles Recursively -}
 updateTile :: GameState -> MapTile -> MapPos -> GameState
 -- Crop Tile
-updateTile (mp, res) (tb, Crop c, tu, te) pos
+updateTile (mp, res) (tb, Crop _, tu, te) pos
     | pos' == (0,0) = st'
     | otherwise     = updateTile st' (getTile mp pos') pos'
     where
         c = cropFertility mp pos
-        res' = res + 1 + c
+        res' = res + baseCropYield + c
         st'  = (changeTile mp pos (tb, Crop c, tu, te), res')
         pos' = nextTilePos mp pos
 -- catch-all
@@ -86,7 +93,7 @@ processCmd cmd = procCmdMap (head cmd') (cmd' !! 1)
 procCmdMap :: String -> String -> GameState -> GameState
 -- Spawn Crop
 procCmdMap "+p" "" st = st   -- no params given
-procCmdMap "+p" prm st@(mp, _) = spawnObject st pos (Crop (cropFertility mp pos)) 30
+procCmdMap "+p" prm st@(mp, _) = spawnObject st pos (Crop (cropFertility mp pos)) cropPrice
     where pos = strToPos prm
 
 -- (DEV MODE)
