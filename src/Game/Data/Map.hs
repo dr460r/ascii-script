@@ -1,6 +1,7 @@
-module Game.Map
+module Game.Data.Map
 ( MapTile
 , Map
+, MapPos
 , Terrain (..)
 , LandType (..)
 , WaterType (..)
@@ -10,6 +11,9 @@ module Game.Map
 , initialMap
 , createMap
 , changeTile
+, getTile
+, mapSize
+, GameState
 )
 where
 
@@ -26,12 +30,26 @@ data Unit = Rats | NoUnit
 type MapTile = (Terrain, Object, Unit, Effect)
 type Map = [[MapTile]]
 
+type MapPos = (Int, Int)
+
+--
+
+type GameState = (Map, Int)
+
 
 {- Utils -}
 
-changeTile :: Map -> (Int, Int) -> MapTile -> Map
+changeTile :: Map -> MapPos -> MapTile -> Map
 changeTile mp (x,y) tl = take y mp ++ [take x trg ++ [tl] ++ drop (x+1) trg] ++ drop (y+1) mp
                     where trg = mp !! y
+
+getTile :: Map -> MapPos -> MapTile
+getTile mp (x,y) = mp !! y !! x
+
+mapSize :: Map -> (Int, Int)
+mapSize [] = (0,0)
+mapSize ([]:_) = (0,0)
+mapSize mp = (length $ head mp, length mp)
 
 
 {- Map creation -}

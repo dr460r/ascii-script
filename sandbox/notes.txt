@@ -5,3 +5,16 @@ Terrain
  |- Water
      |- Fresh (Land water, lakes, rivers, etc.)
      |- Salty (Sea, ocean)
+
+
+Crop growth process:
+..
+.,
+,,
+,;
+;;
+;l
+ll
+lf
+ff
+
