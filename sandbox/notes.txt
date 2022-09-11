@@ -7,14 +7,9 @@ Terrain
      |- Salty (Sea, ocean)
 
 
-Crop growth process:
-..
-.,
-,,
-,;
-;;
-;l
-ll
-lf
-ff
-
+Fire spread:
+      ::      
+    ::ii::    
+  ::ii##ii::
+    ::ii::
+      ::
