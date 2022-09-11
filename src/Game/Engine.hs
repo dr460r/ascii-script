@@ -35,9 +35,9 @@ updateTile (mp, res) (tb, Crop c, tu, te) pos
     | pos' == (0,0) = st'
     | otherwise     = updateTile st' (getTile mp pos') pos'
     where
-        c' = cropFertility mp pos
-        res' = res + 1 + c'
-        st'  = (changeTile mp pos (tb, Crop c', tu, te), res')
+        c = cropFertility mp pos
+        res' = res + 1 + c
+        st'  = (changeTile mp pos (tb, Crop c, tu, te), res')
         pos' = nextTilePos mp pos
 -- catch-all
 updateTile st@(mp, _) _ pos
