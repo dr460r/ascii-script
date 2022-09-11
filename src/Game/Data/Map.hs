@@ -13,6 +13,7 @@ module Game.Data.Map
 , changeTile
 , getTile
 , mapSize
+, hasTerrain
 , GameState
 )
 where
@@ -32,10 +33,24 @@ type Map = [[MapTile]]
 
 type MapPos = (Int, Int)
 
---
-
 type GameState = (Map, Int)
 
+-- Instances of Eq
+
+instance Eq Terrain where
+    Land t1 == Land t2 = t1 == t2
+    Water t1 == Water t2 = t1 == t2
+    _ == _ = False
+
+instance Eq LandType where
+    Arable == Arable = True
+    NonArable == NonArable = True
+    _ == _ = False
+
+instance Eq WaterType where
+    Fresh == Fresh = True
+    Salty == Salty = True
+    _ == _ = False
 
 {- Utils -}
 
@@ -50,6 +65,9 @@ mapSize :: Map -> (Int, Int)
 mapSize [] = (0,0)
 mapSize ([]:_) = (0,0)
 mapSize mp = (length $ head mp, length mp)
+
+hasTerrain :: Terrain -> MapTile -> Bool
+hasTerrain trn (trn', _, _, _) = trn == trn'
 
 
 {- Map creation -}
