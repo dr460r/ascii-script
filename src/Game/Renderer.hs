@@ -10,6 +10,7 @@ import System.Console.ANSI
       ColorIntensity(Vivid, Dull),
       ConsoleLayer(Background, Foreground),
       SGR(Reset, SetColor) )
+import Text.Printf
 import Game.Data.Map ( MapTile, Map, Terrain (..), LandType (..), WaterType (..), Object (..), GameState)
 import System.IO (stdout, hFlush)
 
@@ -26,6 +27,11 @@ clearTerminal = do
     clearScreen
     setCursorPosition 0 0
 
+itf :: Int -> Float
+itf = fromIntegral
+
+showf :: Int -> Int -> String
+showf d = printf ("%." ++ show d ++ "f") . (/(10^d)) . itf
 
 {- Game Renderer -}
 
@@ -33,7 +39,7 @@ render :: GameState -> IO ()
 render (mp, res) = do
     clearTerminal
     renderMap mp
-    renderText $ "resources: " ++ show res ++ "\n\n> "
+    renderText $ "resources: " ++ showf 1 res ++ "\n\n> "
 
 
 {- Map rendering logic -}
