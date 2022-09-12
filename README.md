@@ -1,11 +1,13 @@
-# Ascii Script
+# ASCIIV
+### - ASCII Civilization Game -
 
-Mala terminal-based igrica koja se razvija u Haskell-u
+Tiny terminal based game about building civilization and fighting natural disasters.
 
-## Potrebno za pokretanje igrice
-- ANSI kompatibilan terminal emulator
+## Required to run the game
+- ANSI-compatible terminal emulator
 
-## Softver koji se koristi u razvoju
+## Info
+### My environment for development
 - OS: GNU/Linux
 - Haskell project manager: Stack
-- IDE: VSCodium + Haskell ekstenzija
+- IDE: VSCodium + Haskell extensions
