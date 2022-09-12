@@ -6,14 +6,24 @@ Terrain
      |- Fresh (Land water, lakes, rivers, etc.)
      |- Salty (Sea, ocean)
 
+Map file mappings:
+. - Arable Land
+# - Non Arable Land
+o - Fresh Water
+w - Salty Water
 
-Fire spread:
+
+Fire spread pattern:
       ::      
     ::ii::    
   ::ii##ii::
     ::ii::
       ::
 
+fire tile levels:
+,, = 1 11
+;; = 2 10
+$$ = 3-9
 
 Effects:
 pests
