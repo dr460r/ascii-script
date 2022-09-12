@@ -27,6 +27,7 @@ library
   exposed-modules:
       Game.Data.Map
       Game.Engine
+      Game.Loader
       Game.Renderer
   other-modules:
       Paths_ascii_script
