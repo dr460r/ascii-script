@@ -24,7 +24,7 @@ data Terrain = Land LandType | Water WaterType
 data LandType = Arable | NonArable
 data WaterType = Salty | Fresh
 
-data Object = Crop Int | NoObject
+data Object = Crop Int | House Int | NoObject
 data Effect = Fire Int | NoEffect
 data Unit = Rats | NoUnit
 

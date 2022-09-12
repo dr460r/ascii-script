@@ -11,12 +11,20 @@ import System.IO ( stdin, hReady )
 
 {- Conf -}
 cropPrice :: Int
+cropActons :: Int
 baseCropYield :: Int
-spawnCropActonCost :: Int
 
 cropPrice = 70
-spawnCropActonCost = 1
+cropActons = 1
 baseCropYield = 1
+
+housePop :: Int
+housePrice :: Int
+houseActions :: Int
+
+housePop = 5
+housePrice = 100
+houseActions = 1
 
 
 {- Main Loop -}
@@ -47,9 +55,12 @@ updateTile (mp, res, act, cr) (tb, Crop _, tu, te) pos
     | otherwise     = updateTile st' (getTile mp pos') pos'
     where
         c = cropFertility mp pos
-        res' = res + baseCropYield + (if c > 4 then (if c > 4 then 2 else 1) else 0)
+        res' = res + baseCropYield + (if c > 0 then (if c > 4 then 2 else 1) else 0)
         st'  = (changeTile mp pos (tb, Crop c, tu, te), res', act, cr)
         pos' = nextTilePos mp pos
+
+-- House Tile
+updateTile (mp, rs, ac, cr) (_, House x, _, _) _ = (mp, rs, ac + x, cr)
 
 -- catch-all
 updateTile st@(mp, _, _, _) _ pos
@@ -105,6 +116,7 @@ processCmd "\ESC[B" st = procCmdMap "cursor" "down" st
 processCmd "\ESC[C" st = procCmdMap "cursor" "right" st
 processCmd "\ESC[D" st = procCmdMap "cursor" "left" st
 processCmd "c" st@(_, _, _, cr) = procCmdMap "crop" (show (fst cr) ++ "," ++ show (snd cr)) st
+processCmd "h" st@(_, _, _, cr) = procCmdMap "house" (show (fst cr) ++ "," ++ show (snd cr)) st
 processCmd _ st = procCmdMap "" "" st
 
 
@@ -112,8 +124,11 @@ processCmd _ st = procCmdMap "" "" st
 procCmdMap :: String -> String -> GameState -> GameState
 
 -- Spawn Crop
-procCmdMap "crop" "" st = st   -- no params given
-procCmdMap "crop" prm st@(mp, _, _, _) = spawnObject st pos (Crop (cropFertility mp pos)) cropPrice spawnCropActonCost
+procCmdMap "crop" prm st@(mp, _, _, _) = spawnObject st pos (Crop (cropFertility mp pos)) cropPrice cropActons
+    where pos = strToPos prm
+
+-- Spawn House
+procCmdMap "house" prm st@(mp, _, _, _) = spawnObject st pos (House housePop) housePrice houseActions
     where pos = strToPos prm
 
 -- Cursor movements
@@ -124,7 +139,6 @@ procCmdMap "cursor" "left"  (mp, rs, ac, (x,y)) = (mp, rs, ac, (x',y)) where x' 
 
 -- (DEV MODE)
 -- Spawn Water
-procCmdMap "/w" "" st = st   -- no params given
 procCmdMap "/w" prm (mp, res, act, cr) = (changeTile mp pos tile', res, act, cr)
     where
         pos = strToPos prm
@@ -146,6 +160,7 @@ tileValidity :: MapTile -> Bool
 tileValidity (Land _, NoObject, _, _) = True
 tileValidity (Water _, NoObject, _, _) = True
 tileValidity (Land Arable, Crop _, _, _) = True
+tileValidity (Land _, House _, _, _) = True
 tileValidity _ = False
 
 canBuildOnTile :: MapTile -> Bool

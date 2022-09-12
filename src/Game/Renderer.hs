@@ -95,8 +95,11 @@ renderText s = do
 setColor :: MapTile -> IO ()
 
 -- Crop Field
-setColor (Land Arable, Crop _, _, NoEffect) = do
+setColor (_, Crop _, _, NoEffect) = do
     setSGR [SetColor Background Vivid Yellow]
+    setSGR [SetColor Foreground Dull Black]
+-- House
+setColor (_ , House _, _, NoEffect) = do
     setSGR [SetColor Foreground Dull Black]
 -- Arable Land
 setColor (Land Arable, _, _, NoEffect) = do
@@ -126,5 +129,7 @@ strForTile (_, Crop x, _, _)
         | x == 0 = ";;"
         | x < 5 = "ll"
         | otherwise = "##"
+-- House
+strForTile (_, House _, _, _) = "┌┐"
 -- catch-all
 strForTile _ = "  "
