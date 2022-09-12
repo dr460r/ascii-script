@@ -9,5 +9,5 @@ main = do
     m <- loadMap "res/maps/default"
     hSetBuffering stdin NoBuffering
     hSetEcho stdin False
-    update (m, 200) ""
+    update (m, 200, 1, (7,7)) ""
 

@@ -11,7 +11,7 @@ import System.Console.ANSI
       ConsoleLayer(Background, Foreground),
       SGR(Reset, SetColor) )
 import Text.Printf
-import Game.Data.Map ( MapTile, Map, Terrain (..), LandType (..), WaterType (..), Object (..), GameState, Effect (NoEffect))
+import Game.Data.Map ( MapTile, Map, Terrain (..), LandType (..), WaterType (..), Object (..), GameState, Effect (NoEffect), MapPos)
 import System.IO (stdout, hFlush)
 
 
@@ -36,11 +36,11 @@ showf d = printf ("%." ++ show d ++ "f") . (/(10^d)) . itf
 {- Game Renderer -}
 
 render :: GameState -> IO ()
-render (mp, res) = do
+render (mp, res, act, cr) = do
     clearTerminal
-    renderMap mp
+    renderMap mp cr
     renderText $ "resources: " ++ showf 1 res
-    renderText " | population: placeholder\n"
+    renderText $ " | actions left: " ++ show act ++ "\n\n"
     renderText "c - Plant crops\n"
     renderText "h - Build house\n"
     renderText "(everything is placed on the tile where is cursor currently)\n"
@@ -49,33 +49,36 @@ render (mp, res) = do
 {- Map rendering logic -}
 
 -- Render Map
-renderMap :: Map -> IO ()
-renderMap mp = do
-    renderMapLoop mp
+renderMap :: Map -> MapPos -> IO ()
+renderMap mp cr = do
+    renderMapLoop mp (0,0) cr
     resetColor
     hFlush stdout
 
 
--- Recursive loop to render map
-renderMapLoop :: Map -> IO ()
+-- Recursive loop to render map (map -> current pos -> cursor pos -> IO)
+renderMapLoop :: Map -> MapPos -> MapPos -> IO ()
 
-renderMapLoop [] = do                   -- when map is finished rendering
+renderMapLoop [] _ _ = do                           -- when map is finished rendering
     putStr ""
 
-renderMapLoop ([]:cls) = do             -- when one row of map is finished rendering
+renderMapLoop ([]:cls) (_,y) cr = do                -- when one row of map is finished rendering
     putStrLn ""
-    renderMap cls
+    renderMapLoop cls (0,y+1) cr
 
-renderMapLoop ((cl:clr):cls) = do       -- when actual tile rendering is happenging
-    renderMapTile cl
-    renderMap (clr:cls)
+renderMapLoop ((cl:clr):cls) (x,y) (cx,cy) = do     -- when actual tile rendering is happenging
+    renderMapTile cl (x == cx && y == cy)
+    renderMapLoop (clr:cls) (x+1,y) (cx,cy)
 
 
--- Render Map Tile
-renderMapTile :: MapTile -> IO ()
-renderMapTile tile = do
-    setColor tile
-    putStr $ strForTile tile
+-- Render Map Tile (map tile -> to render cursor -> IO)
+renderMapTile :: MapTile -> Bool -> IO ()
+renderMapTile tile cr = do
+    --setColor tile
+    let str = strForTile tile
+    if cr then setSGR [SetColor Background Vivid Black] else setColor tile --EXP
+    --putStr $ if cr then "+" ++ tail str else str                      --EXP
+    putStr str
 
 
 {- Other rendering logic -}

@@ -12,8 +12,10 @@ import System.IO ( stdin, hReady )
 {- Conf -}
 cropPrice :: Int
 baseCropYield :: Int
+spawnCropActonCost :: Int
 
 cropPrice = 70
+spawnCropActonCost = 1
 baseCropYield = 0
 
 
@@ -34,21 +36,21 @@ passTime = updateMap -- TODO: Add logic for time passing (integer that represent
 
 {- Update Map -}
 updateMap :: GameState -> GameState
-updateMap st@(mp, _) = updateTile st (getTile mp p) p where p = (0,0)
+updateMap st@(mp, _, _, _) = updateTile st (getTile mp (0,0)) (0,0)
 
 {- Update Tiles Recursively -}
 updateTile :: GameState -> MapTile -> MapPos -> GameState
 -- Crop Tile
-updateTile (mp, res) (tb, Crop _, tu, te) pos
+updateTile (mp, res, act, cr) (tb, Crop _, tu, te) pos
     | pos' == (0,0) = st'
     | otherwise     = updateTile st' (getTile mp pos') pos'
     where
         c = cropFertility mp pos
         res' = res + baseCropYield + c
-        st'  = (changeTile mp pos (tb, Crop c, tu, te), res')
+        st'  = (changeTile mp pos (tb, Crop c, tu, te), res', act, cr)
         pos' = nextTilePos mp pos
 -- catch-all
-updateTile st@(mp, _) _ pos
+updateTile st@(mp, _, _, _) _ pos
     | pos' == (0,0) = st
     | otherwise     = updateTile st (getTile mp pos') pos'
     where
@@ -95,24 +97,34 @@ getKey = reverse <$> getKey' ""
 
 {- Process cmd -}
 processCmd :: String -> GameState -> GameState
-processCmd "\n" = passTime
-processCmd "\ESC[A" = processCmd "c 6,6"
-processCmd cmd = procCmdMap (head cmd') (cmd' !! 1)
-                where cmd' = splitOn " " cmd
+processCmd "\n" st = passTime st
+processCmd "\ESC[A" st = procCmdMap "cursor" "up" st
+processCmd "\ESC[B" st = procCmdMap "cursor" "down" st
+processCmd "\ESC[C" st = procCmdMap "cursor" "right" st
+processCmd "\ESC[D" st = procCmdMap "cursor" "left" st
+processCmd "c" st@(_, _, _, cr) = procCmdMap "crop" (show (fst cr) ++ "," ++ show (snd cr)) st
+processCmd _ st = procCmdMap "" "" st
 
 
 {- Command Mappings -}
 procCmdMap :: String -> String -> GameState -> GameState
+
 -- Spawn Crop
-procCmdMap "c" "" st = st   -- no params given
-procCmdMap "c" prm st@(mp, _) = spawnObject st pos (Crop (cropFertility mp pos)) cropPrice
+procCmdMap "crop" "" st = st   -- no params given
+procCmdMap "crop" prm st@(mp, _, _, _) = spawnObject st pos (Crop (cropFertility mp pos)) cropPrice spawnCropActonCost
     where pos = strToPos prm
+
+-- Cursor movements
+procCmdMap "cursor" "up"    (mp, rs, ac, (x,y)) = (mp, rs, ac, (x,y')) where y' = if y-1 >= 0 then y-1 else y
+procCmdMap "cursor" "down"  (mp, rs, ac, (x,y)) = (mp, rs, ac, (x,y')) where y' = if y+1 < snd (mapSize mp) then y+1 else y
+procCmdMap "cursor" "right" (mp, rs, ac, (x,y)) = (mp, rs, ac, (x',y)) where x' = if x+1 < fst (mapSize mp) then x+1 else x
+procCmdMap "cursor" "left"  (mp, rs, ac, (x,y)) = (mp, rs, ac, (x',y)) where x' = if x-1 >= 0 then x-1 else x
 
 -- (DEV MODE)
 -- Spawn Water
 procCmdMap "/w" "" st = st   -- no params given
-procCmdMap "/w" prm (mp, res) = (changeTile mp pos tile', res)
-    where 
+procCmdMap "/w" prm (mp, res, act, cr) = (changeTile mp pos tile', res, act, cr)
+    where
         pos = strToPos prm
         (_, tobj, tunit, teff) = getTile mp pos
         tile' = (Water Fresh, tobj, tunit, teff)
@@ -121,9 +133,9 @@ procCmdMap _ _ st = st
 
 
 {-== Command Processing Utils ==-}
-spawnObject :: GameState -> MapPos -> Object -> Int -> GameState
-spawnObject (mp, res) pos obj cost = if valid then (changeTile mp pos tile', res - cost) else (mp, res)
-    where 
+spawnObject :: GameState -> MapPos -> Object -> Int -> Int -> GameState
+spawnObject st@(mp, res, act, cr) pos obj cost acost = if valid then (changeTile mp pos tile', res - cost, act - acost, cr) else st
+    where
         tile@(tb, _, tu, te) = getTile mp pos
         tile' = (tb, obj, tu, te)
         valid = tileValidity tile' && res - cost >= 0 && canBuildOnTile tile

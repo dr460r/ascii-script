@@ -33,7 +33,7 @@ type Map = [[MapTile]]
 
 type MapPos = (Int, Int)
 
-type GameState = (Map, Int)
+type GameState = (Map, Int, Int, MapPos) -- map, resources, actions, cursor
 
 -- Instances of Eq
 
