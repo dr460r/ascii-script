@@ -6,7 +6,7 @@ import System.IO ( hSetBuffering, stdin, BufferMode (..), hSetEcho )
 import Game.Data.Map ( mapSize )
 
 startRes :: Int
-startRes = 30
+startRes = 75
 
 main :: IO ()
 main = do

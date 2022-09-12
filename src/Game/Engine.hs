@@ -23,7 +23,7 @@ housePrice :: Int
 houseActions :: Int
 
 housePop = 5
-housePrice = 100
+housePrice = 500
 houseActions = 1
 
 

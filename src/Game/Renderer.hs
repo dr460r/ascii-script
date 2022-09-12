@@ -3,13 +3,6 @@ module Game.Renderer
 where
 
 import System.Console.ANSI
-    ( clearScreen,
-      setCursorPosition,
-      setSGR,
-      Color(Cyan, Yellow, Green, Black, White, Blue),
-      ColorIntensity(Vivid, Dull),
-      ConsoleLayer(Background, Foreground),
-      SGR(Reset, SetColor) )
 import Text.Printf
 import Game.Data.Map ( MapTile, Map, Terrain (..), LandType (..), WaterType (..), Object (..), GameState, Effect (NoEffect), MapPos)
 import System.IO (stdout, hFlush)
@@ -41,8 +34,8 @@ render (mp, res, act, cr) = do
     renderMap mp cr
     renderText $ "resources: " ++ showf 1 res
     renderText $ " | actions left: " ++ show act ++ "\n\n"
-    renderText "c - Plant Crops (cost:  8 res., 1 act.)\n"
-    renderText "h - Build House (cost: 15 res., 1 act.)\n\n"
+    renderText "c - Plant Crops (cost:  5 res., 1 act.)\n"
+    renderText "h - Build House (cost: 50 res., 1 act.)\n\n"
     --renderText "(everything is placed on the tile where is cursor currently)\n"
 
 
@@ -100,7 +93,8 @@ setColor (_, Crop _, _, NoEffect) = do
     setSGR [SetColor Foreground Dull Black]
 -- House
 setColor (_ , House _, _, NoEffect) = do
-    setSGR [SetColor Foreground Dull Black]
+    setSGR [SetColor Background Dull Black]
+    setSGR [SetColor Foreground Vivid White]
 -- Arable Land
 setColor (Land Arable, _, _, NoEffect) = do
     setSGR [SetColor Background Dull Green]
@@ -130,6 +124,6 @@ strForTile (_, Crop x, _, _)
         | x < 5     = "ii"
         | otherwise = "ll"
 -- House
-strForTile (_, House _, _, _) = "┌┐"
+strForTile (_, House _, _, _) = "⌂⌂"
 -- catch-all
 strForTile _ = "  "
