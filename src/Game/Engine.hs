@@ -138,7 +138,7 @@ spawnObject st@(mp, res, act, cr) pos obj cost acost = if valid then (changeTile
     where
         tile@(tb, _, tu, te) = getTile mp pos
         tile' = (tb, obj, tu, te)
-        valid = tileValidity tile' && res - cost >= 0 && canBuildOnTile tile
+        valid = tileValidity tile' && res - cost >= 0 && act - acost >= 0 && canBuildOnTile tile
 
 tileValidity :: MapTile -> Bool
 tileValidity (Land _, NoObject, _, _) = True
