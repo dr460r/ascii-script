@@ -126,9 +126,9 @@ strForTile :: MapTile -> String
 
 -- Crop
 strForTile (_, Crop x, _, _)
-        | x == 0 = ";;"
-        | x < 5 = "ll"
-        | otherwise = "##"
+        | x == 0    = ";;"
+        | x < 5     = "ii"
+        | otherwise = "ll"
 -- House
 strForTile (_, House _, _, _) = "┌┐"
 -- catch-all

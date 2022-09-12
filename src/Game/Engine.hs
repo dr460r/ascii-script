@@ -128,7 +128,7 @@ procCmdMap "crop" prm st@(mp, _, _, _) = spawnObject st pos (Crop (cropFertility
     where pos = strToPos prm
 
 -- Spawn House
-procCmdMap "house" prm st@(mp, _, _, _) = spawnObject st pos (House housePop) housePrice houseActions
+procCmdMap "house" prm st = spawnObject st pos (House housePop) housePrice houseActions
     where pos = strToPos prm
 
 -- Cursor movements
