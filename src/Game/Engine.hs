@@ -114,7 +114,7 @@ spawnObject (mp, res) pos obj cost = if valid then (changeTile mp pos tile', res
     where 
         tile@(tb, _, tu, te) = getTile mp pos
         tile' = (tb, obj, tu, te)
-        valid = tileValidity tile' && res - cost >= 0 && tileHasObject tile
+        valid = tileValidity tile' && res - cost >= 0 && canBuildOnTile tile
 
 tileValidity :: MapTile -> Bool
 tileValidity (Land _, NoObject, _, _) = True
@@ -122,9 +122,9 @@ tileValidity (Water _, NoObject, _, _) = True
 tileValidity (Land Arable, Crop _, _, _) = True
 tileValidity _ = False
 
-tileHasObject :: MapTile -> Bool
-tileHasObject (_, NoObject, _, _) = True
-tileHasObject (_, _, _, _) = False
+canBuildOnTile :: MapTile -> Bool
+canBuildOnTile (_, NoObject, _, _) = True
+canBuildOnTile (_, _, _, _) = False
 
 -- " abc  " -> "abc"
 trim :: String -> String
