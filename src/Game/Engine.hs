@@ -92,14 +92,14 @@ processCmd cmd = procCmdMap (head cmd') (cmd' !! 1)
 {- Command Mappings -}
 procCmdMap :: String -> String -> GameState -> GameState
 -- Spawn Crop
-procCmdMap "+p" "" st = st   -- no params given
-procCmdMap "+p" prm st@(mp, _) = spawnObject st pos (Crop (cropFertility mp pos)) cropPrice
+procCmdMap "c" "" st = st   -- no params given
+procCmdMap "c" prm st@(mp, _) = spawnObject st pos (Crop (cropFertility mp pos)) cropPrice
     where pos = strToPos prm
 
 -- (DEV MODE)
 -- Spawn Water
-procCmdMap "/+w" "" st = st   -- no params given
-procCmdMap "/+w" prm (mp, res) = (changeTile mp pos tile', res)
+procCmdMap "/w" "" st = st   -- no params given
+procCmdMap "/w" prm (mp, res) = (changeTile mp pos tile', res)
     where 
         pos = strToPos prm
         (_, tobj, tunit, teff) = getTile mp pos
@@ -110,10 +110,17 @@ procCmdMap _ _ st = st
 
 {-== Command Processing Utils ==-}
 spawnObject :: GameState -> MapPos -> Object -> Int -> GameState
-spawnObject (mp, res) pos obj cost = (changeTile mp pos tile', res - cost)
+spawnObject (mp, res) pos obj cost = if valid then (changeTile mp pos tile', res - cost) else (mp, res)
     where 
         (tb, _, tu, te) = getTile mp pos
         tile' = (tb, obj, tu, te)
+        valid = tileValidity tile'
+
+tileValidity :: MapTile -> Bool
+tileValidity (Land _, NoObject, _, _) = True
+tileValidity (Water _, NoObject, _, _) = True
+tileValidity (Land Arable, Crop _, _, _) = True
+tileValidity _ = False
 
 -- " abc  " -> "abc"
 trim :: String -> String
