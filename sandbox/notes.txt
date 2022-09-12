@@ -13,3 +13,14 @@ Fire spread:
   ::ii##ii::
     ::ii::
       ::
+
+
+Effects:
+pests
+fire
+
+UI:
+What is available to create/do (command list with explanations)
+
+
+Name: asciiv
