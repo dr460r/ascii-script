@@ -1,4 +1,4 @@
-# Changelog for `ascii-script`
+# Changelog for `asciiv`
 
 All notable changes to this project will be documented in this file.
 

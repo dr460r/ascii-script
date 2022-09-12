@@ -4,11 +4,11 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           ascii-script
+name:           asciiv
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/ascii-script#readme>
-homepage:       https://github.com/githubuser/ascii-script#readme
-bug-reports:    https://github.com/githubuser/ascii-script/issues
+description:    Please see the README on GitHub at <https://github.com/githubuser/asciiv#readme>
+homepage:       https://github.com/githubuser/asciiv#readme
+bug-reports:    https://github.com/githubuser/asciiv/issues
 author:         Author name here
 maintainer:     example@example.com
 copyright:      2022 Author name here
@@ -21,7 +21,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/ascii-script
+  location: https://github.com/githubuser/asciiv
 
 library
   exposed-modules:
@@ -30,7 +30,7 @@ library
       Game.Loader
       Game.Renderer
   other-modules:
-      Paths_ascii_script
+      Paths_asciiv
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
@@ -40,31 +40,31 @@ library
     , split
   default-language: Haskell2010
 
-executable ascii-script-exe
+executable asciiv-exe
   main-is: Main.hs
   other-modules:
-      Paths_ascii_script
+      Paths_asciiv
   hs-source-dirs:
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       ansi-terminal
-    , ascii-script
+    , asciiv
     , base >=4.7 && <5
     , split
   default-language: Haskell2010
 
-test-suite ascii-script-test
+test-suite asciiv-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_ascii_script
+      Paths_asciiv
   hs-source-dirs:
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       ansi-terminal
-    , ascii-script
+    , asciiv
     , base >=4.7 && <5
     , split
   default-language: Haskell2010
