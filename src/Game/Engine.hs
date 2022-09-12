@@ -110,7 +110,7 @@ getKey = reverse <$> getKey' ""
 
 {- Process cmd -}
 processCmd :: String -> GameState -> GameState
-processCmd "\n" st = passTime st
+processCmd "\n" (m, r, a, c) = passTime (m, r, 0, c)
 processCmd "\ESC[A" st = procCmdMap "cursor" "up" st
 processCmd "\ESC[B" st = procCmdMap "cursor" "down" st
 processCmd "\ESC[C" st = procCmdMap "cursor" "right" st

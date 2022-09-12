@@ -19,4 +19,5 @@ parseTileTerrain "." = (Land Arable, NoObject, NoUnit, NoEffect)
 parseTileTerrain "#" = (Land NonArable, NoObject, NoUnit, NoEffect)
 parseTileTerrain "o" = (Water Fresh, NoObject, NoUnit, NoEffect)
 parseTileTerrain "w" = (Water Salty, NoObject, NoUnit, NoEffect)
-parseTileTerrain _ = (Land NonArable, NoObject, NoUnit, NoEffect) -- catch-all
+--parseTileTerrain "H" = (Land Arable, House 5, NoUnit, NoEffect) -- TODO: Separate map for objects (TERMPORAL)
+parseTileTerrain _   = (Land NonArable, NoObject, NoUnit, NoEffect) -- catch-all
