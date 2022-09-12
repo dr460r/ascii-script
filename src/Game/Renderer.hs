@@ -123,14 +123,8 @@ strForTile :: MapTile -> String
 
 -- Crop
 strForTile (_, Crop x, _, _)
-        | x == 0 = ". "
-        | x == 1 = ".."
-        | x == 2 = ",,"
-        | x == 3 = "::"
-        | x == 4 = ";;"
-        | x == 5 = "ii"
-        | x == 6 = "ll"
-        | x == 7 = "$$"
-        | x == 8 = "##"
+        | x == 0 = ";;"
+        | x < 5 = "ll"
+        | otherwise = "##"
 -- catch-all
 strForTile _ = "  "

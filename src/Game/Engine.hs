@@ -16,7 +16,7 @@ spawnCropActonCost :: Int
 
 cropPrice = 70
 spawnCropActonCost = 1
-baseCropYield = 0
+baseCropYield = 1
 
 
 {- Main Loop -}
@@ -40,15 +40,17 @@ updateMap st@(mp, _, _, _) = updateTile st (getTile mp (0,0)) (0,0)
 
 {- Update Tiles Recursively -}
 updateTile :: GameState -> MapTile -> MapPos -> GameState
+
 -- Crop Tile
 updateTile (mp, res, act, cr) (tb, Crop _, tu, te) pos
     | pos' == (0,0) = st'
     | otherwise     = updateTile st' (getTile mp pos') pos'
     where
         c = cropFertility mp pos
-        res' = res + baseCropYield + c
+        res' = res + baseCropYield + (if c > 4 then (if c > 4 then 2 else 1) else 0)
         st'  = (changeTile mp pos (tb, Crop c, tu, te), res', act, cr)
         pos' = nextTilePos mp pos
+
 -- catch-all
 updateTile st@(mp, _, _, _) _ pos
     | pos' == (0,0) = st
