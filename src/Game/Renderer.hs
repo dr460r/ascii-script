@@ -6,12 +6,12 @@ import System.Console.ANSI
     ( clearScreen,
       setCursorPosition,
       setSGR,
-      Color(Cyan, Yellow, Green, Black),
+      Color(Cyan, Yellow, Green, Black, White, Blue),
       ColorIntensity(Vivid, Dull),
       ConsoleLayer(Background, Foreground),
       SGR(Reset, SetColor) )
 import Text.Printf
-import Game.Data.Map ( MapTile, Map, Terrain (..), LandType (..), WaterType (..), Object (..), GameState)
+import Game.Data.Map ( MapTile, Map, Terrain (..), LandType (..), WaterType (..), Object (..), GameState, Effect (NoEffect))
 import System.IO (stdout, hFlush)
 
 
@@ -88,16 +88,25 @@ renderText s = do
 setColor :: MapTile -> IO ()
 
 -- Crop Field
-setColor (Land Arable, Crop _, _, _) = do
+setColor (Land Arable, Crop _, _, NoEffect) = do
     setSGR [SetColor Background Vivid Yellow]
     setSGR [SetColor Foreground Dull Black]
-
 -- Arable Land
-setColor (Land Arable, _, _, _) = setSGR [SetColor Background Dull Green]
-
+setColor (Land Arable, _, _, NoEffect) = do
+    setSGR [SetColor Background Dull Green]
+    setSGR [SetColor Foreground Dull Black]
+-- Non Arable Land
+setColor (Land NonArable, _, _, NoEffect) = do
+    setSGR [SetColor Background Dull Yellow]
+    setSGR [SetColor Foreground Dull White]
 -- Fresh Water
-setColor (Water Fresh, _, _, _) = setSGR [SetColor Background Vivid Cyan]
-
+setColor (Water Fresh, _, _, NoEffect) = do
+    setSGR [SetColor Background Vivid Cyan]
+    setSGR [SetColor Foreground Dull Cyan]
+-- Fresh Water
+setColor (Water Salty, _, _, NoEffect) = do
+    setSGR [SetColor Background Vivid Blue]
+    setSGR [SetColor Foreground Dull Blue]
 -- catch-all
 setColor _ = resetColor
 
