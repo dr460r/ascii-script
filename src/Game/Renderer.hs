@@ -41,9 +41,9 @@ render (mp, res, act, cr) = do
     renderMap mp cr
     renderText $ "resources: " ++ showf 1 res
     renderText $ " | actions left: " ++ show act ++ "\n\n"
-    renderText "c - Plant crops\n"
-    renderText "h - Build house\n"
-    renderText "(everything is placed on the tile where is cursor currently)\n"
+    renderText "c - Plant Crops (cost:  8 res., 1 act.)\n"
+    renderText "h - Build House (cost: 15 res., 1 act.)\n\n"
+    --renderText "(everything is placed on the tile where is cursor currently)\n"
 
 
 {- Map rendering logic -}
@@ -74,10 +74,10 @@ renderMapLoop ((cl:clr):cls) (x,y) (cx,cy) = do     -- when actual tile renderin
 -- Render Map Tile (map tile -> to render cursor -> IO)
 renderMapTile :: MapTile -> Bool -> IO ()
 renderMapTile tile cr = do
-    --setColor tile
+    setColor tile
     let str = strForTile tile
-    if cr then setSGR [SetColor Background Vivid Black] else setColor tile --EXP
-    --putStr $ if cr then "+" ++ tail str else str                      --EXP
+    if cr then setSGR [SetColor Background Vivid Black] else pure ()    --EXP
+    --putStr $ if cr then "  " else str                        --EXP
     putStr str
 
 
