@@ -23,7 +23,7 @@ update st com = do
     let st' = processCmd com st
     render st'
     com' <- getKey
-    update (passTime st') com'
+    update st' com'
 
 
 {-== Game State Update Logic ==-}
@@ -95,6 +95,7 @@ getKey = reverse <$> getKey' ""
 
 {- Process cmd -}
 processCmd :: String -> GameState -> GameState
+processCmd "\n" = passTime
 processCmd "\ESC[A" = processCmd "c 6,6"
 processCmd cmd = procCmdMap (head cmd') (cmd' !! 1)
                 where cmd' = splitOn " " cmd
