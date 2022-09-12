@@ -7,6 +7,7 @@ where
 import Data.List.Split ( splitOn )
 import Game.Renderer ( render )
 import Game.Data.Map
+import System.IO ( stdin, hReady )
 
 {- Conf -}
 cropPrice :: Int
@@ -21,7 +22,7 @@ update :: GameState -> String -> IO ()
 update st com = do
     let st' = processCmd com st
     render st'
-    com' <- getLine
+    com' <- getKey
     update (passTime st') com'
 
 
@@ -83,8 +84,18 @@ countSurrTiles mp (x,y) fn = cU + cD + cL + cR + cUL + cUR + cDL + cDR
 
 {-== Command Processing Logic ==-}
 
+{- Combines multy-char keys into one String -}
+getKey :: IO [Char]
+getKey = reverse <$> getKey' ""
+  where getKey' chars = do
+          char <- getChar
+          more <- hReady stdin
+          (if more then getKey' else return) (char:chars)
+
+
 {- Process cmd -}
 processCmd :: String -> GameState -> GameState
+processCmd "\ESC[A" = processCmd "c 6,6"
 processCmd cmd = procCmdMap (head cmd') (cmd' !! 1)
                 where cmd' = splitOn " " cmd
 
