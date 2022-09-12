@@ -39,7 +39,11 @@ render :: GameState -> IO ()
 render (mp, res) = do
     clearTerminal
     renderMap mp
-    renderText $ "resources: " ++ showf 1 res ++ "\n\n> "
+    renderText $ "resources: " ++ showf 1 res
+    renderText " | population: placeholder\n"
+    renderText "c - Plant crops\n"
+    renderText "h - Build house\n"
+    renderText "(everything is placed on the tile where is cursor currently)\n"
 
 
 {- Map rendering logic -}
@@ -56,7 +60,7 @@ renderMap mp = do
 renderMapLoop :: Map -> IO ()
 
 renderMapLoop [] = do                   -- when map is finished rendering
-    putStrLn ""
+    putStr ""
 
 renderMapLoop ([]:cls) = do             -- when one row of map is finished rendering
     putStrLn ""
