@@ -78,6 +78,11 @@ hasTerrain :: Terrain -> MapTile -> Bool
 hasTerrain trn (trn', _, _, _) = trn == trn'
 
 setEffectOnPos :: Map -> Effect -> MapPos -> Map
+setEffectOnPos mp NoEffect pos = changeTile mp pos tile'
+    where
+        (tb, to, tu, _) = getTile mp pos
+        tile' = (tb, to, tu, NoEffect)
+        
 setEffectOnPos mp ef pos = if isPosValid mp pos && valid then changeTile mp pos tile' else mp
     where
         tile@(tb, to, tu, _) = getTile mp pos

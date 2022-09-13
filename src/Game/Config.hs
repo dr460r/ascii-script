@@ -13,6 +13,8 @@ module Game.Config
 , houseActions
 
 , backupActions
+, fightCost
+, fightActions
 )
 where
 
@@ -27,6 +29,11 @@ baseCropYield :: Int
 housePop :: Int
 housePrice :: Int
 houseActions :: Int
+
+fightCost :: Int
+fightActions :: Int
+
+backupActions :: Int
 
 {- Fire -}
 fireMxLvl = 7       -- Must be at least 5
@@ -43,6 +50,12 @@ housePop = 5
 housePrice = 500
 houseActions = 1
 
+{- Fight -}
+fightCost = 30
+fightActions = 1
+
+
 {- General -}
-backupActions :: Int
 backupActions = 1
+
+

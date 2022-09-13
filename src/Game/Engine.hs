@@ -157,11 +157,12 @@ procCmdMap "house" prm st = spawnObject st pos (House housePop) housePrice house
     where pos = strToPos prm
 
 -- Fight Fire (or other disasters)
-procCmdMap "fight" prm (mp, res, act, cr) = (changeTile mp pos tile', res, act, cr)
+procCmdMap "fight" prm st@(mp, res, act, cr) = st'
     where
-        pos = strToPos prm
-        (tb, to, tu, _) = getTile mp pos
-        tile' = (tb, to, tu, NoEffect)
+        canfight = res - fightCost >= 0 && act - fightActions >= 0
+        mp' = setEffectOnPos mp NoEffect (strToPos prm)
+        st' = if canfight then (mp', res - fightCost, act - fightActions, cr) else st
+        
 
 -- Cursor movements
 procCmdMap "cursor" "up"    (mp, rs, ac, (x,y)) = (mp, rs, ac, (x,y')) where y' = if y-1 >= 0 then y-1 else y
