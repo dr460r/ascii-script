@@ -89,30 +89,41 @@ renderText s = do
 {- Color Mappings -}
 setColor :: MapTile -> IO ()
 
--- Crop Field
+-- Fire
+setColor (_, _, _, Fire _) = do
+    setSGR [SetColor Background Vivid Red]
+    setSGR [SetColor Foreground Vivid Yellow]
+
+-- Crop
 setColor (_, Crop _, _, NoEffect) = do
     setSGR [SetColor Background Vivid Yellow]
     setSGR [SetColor Foreground Dull Black]
+
 -- House
 setColor (_ , House _, _, NoEffect) = do
     setSGR [SetColor Background Dull Black]
     setSGR [SetColor Foreground Vivid White]
+
 -- Arable Land
 setColor (Land Arable, _, _, NoEffect) = do
     setSGR [SetColor Background Dull Green]
-    setSGR [SetColor Foreground Dull Black]
+    setSGR [SetColor Foreground Dull Green]
+
 -- Non Arable Land
 setColor (Land NonArable, _, _, NoEffect) = do
     setSGR [SetColor Background Dull Yellow]
-    setSGR [SetColor Foreground Dull White]
+    setSGR [SetColor Foreground Dull Yellow]
+
 -- Fresh Water
 setColor (Water Fresh, _, _, NoEffect) = do
     setSGR [SetColor Background Vivid Cyan]
-    setSGR [SetColor Foreground Dull Cyan]
--- Fresh Water
+    setSGR [SetColor Foreground Vivid Cyan]
+
+-- Salty Water
 setColor (Water Salty, _, _, NoEffect) = do
     setSGR [SetColor Background Vivid Blue]
-    setSGR [SetColor Foreground Dull Blue]
+    setSGR [SetColor Foreground Vivid Blue]
+
 -- catch-all
 setColor _ = resetColor
 
@@ -121,14 +132,14 @@ setColor _ = resetColor
 strForTile :: MapTile -> String
 
 -- Crop
-strForTile (_, Crop x, _, _)
-        | x == 0    = ";;"
-        | x < 5     = "ii"
-        | otherwise = "ll"
 strForTile (_, _, _, Fire x)
         | x == 1 || x == fireMxLvl       = ",,"
         | x == 2 || x == (fireMxLvl - 1) = "ff"
         | otherwise = "$$"
+strForTile (_, Crop x, _, _)
+        | x == 0    = ";;"
+        | x < 5     = "ii"
+        | otherwise = "ll"
 -- House
 strForTile (_, House _, _, _) = "⌂⌂"
 -- catch-all
