@@ -118,18 +118,19 @@ processCmd "i" st = procCmdMap "cursor" "up" st
 processCmd "k" st = procCmdMap "cursor" "down" st
 processCmd "l" st = procCmdMap "cursor" "right" st
 processCmd "j" st = procCmdMap "cursor" "left" st
--- alternatives (Arrows - Linux only)
+-- alternatives (Linux only)
 processCmd "\ESC[A" st = processCmd "i" st
 processCmd "\ESC[B" st = processCmd "k" st
 processCmd "\ESC[C" st = processCmd "l" st
 processCmd "\ESC[D" st = processCmd "j" st
-processCmd "w" st = processCmd "i" st
-processCmd "s" st = processCmd "k" st
-processCmd "d" st = processCmd "l" st
-processCmd "a" st = processCmd "j" st
 -- Other Actions
-processCmd "u" st@(_, _, _, cr) = procCmdMap "crop" (show (fst cr) ++ "," ++ show (snd cr)) st
-processCmd "h" st@(_, _, _, cr) = procCmdMap "house" (show (fst cr) ++ "," ++ show (snd cr)) st
+processCmd "x" st@(_, _, _, cr) = procCmdMap "house" (showTuple cr) st
+processCmd "c" st@(_, _, _, cr) = procCmdMap "crop" (showTuple cr) st
+processCmd "v" st@(_, _, _, cr) = procCmdMap "fight" (showTuple cr) st
+-- alternatives
+processCmd "h" st = processCmd "x" st
+processCmd "u" st = processCmd "c" st
+processCmd "y" st = processCmd "v" st
 processCmd _ st = procCmdMap "" "" st
 
 
@@ -200,3 +201,6 @@ cropFertility mp pos = countSurrTiles mp pos (hasTerrain (Water Fresh))
 bti :: Bool -> Int
 bti True = 1
 bti False = 0
+
+showTuple :: Show a => (a,a) -> String
+showTuple (x,y) = show x ++ "," ++ show y

@@ -25,6 +25,8 @@ fire tile levels:
 ;; = 2 10
 $$ = 3-9
 
+extinguish fire / fight the fire: key Y
+
 Effects:
 pests
 fire
