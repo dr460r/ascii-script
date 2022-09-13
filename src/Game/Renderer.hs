@@ -3,9 +3,11 @@ module Game.Renderer
 where
 
 import System.Console.ANSI
-import Text.Printf
-import Game.Data.Map ( MapTile, Map, Terrain (..), LandType (..), WaterType (..), Object (..), GameState, Effect (NoEffect), MapPos)
 import System.IO (stdout, hFlush)
+import Text.Printf
+
+import Game.Data.Map ( MapTile, Map, Terrain (..), LandType (..), WaterType (..), Object (..), GameState, Effect (..), MapPos)
+import Game.Config ( fireMxLvl )
 
 
 {- Reset Color -}
@@ -123,6 +125,10 @@ strForTile (_, Crop x, _, _)
         | x == 0    = ";;"
         | x < 5     = "ii"
         | otherwise = "ll"
+strForTile (_, _, _, Fire x)
+        | x == 1 || x == fireMxLvl       = ",,"
+        | x == 2 || x == (fireMxLvl - 1) = "ff"
+        | otherwise = "$$"
 -- House
 strForTile (_, House _, _, _) = "⌂⌂"
 -- catch-all

@@ -1,30 +1,14 @@
 module Game.Engine
 ( update
-, housePop
 )
 where
 
-import Data.List.Split ( splitOn )
-import Game.Renderer ( render )
-import Game.Data.Map
 import System.IO ( stdin, hReady )
+import Data.List.Split ( splitOn )
 
-{- Conf -}
-cropPrice :: Int
-cropActons :: Int
-baseCropYield :: Int
-
-cropPrice = 50
-cropActons = 1
-baseCropYield = 1
-
-housePop :: Int
-housePrice :: Int
-houseActions :: Int
-
-housePop = 5
-housePrice = 500
-houseActions = 1
+import Game.Data.Map
+import Game.Config
+import Game.Renderer ( render )
 
 
 {- Main Loop -}
@@ -62,8 +46,21 @@ updateTile (mp, res, act, cr) (tb, Crop _, tu, te) pos
 -- House Tile
 updateTile (mp, rs, ac, cr) (_, House x, _, _) _ = (mp, rs, ac + x, cr)
 
+-- Fire Tile
+updateTile (mp, rs, ac, cr) (tb, to, tu, Fire fr) pos = (mp', rs, ac, cr)
+    where 
+        mp' = changeTile mp pos (tb, to, tu, if fr == fireMxLvl then NoEffect else Fire (fr + 1))
+
 -- catch-all
 updateTile st@(mp, _, _, _) _ pos
+    | pos' == (0,0) = st
+    | otherwise     = updateTile st (getTile mp pos') pos'
+    where
+        pos' = nextTilePos mp pos
+
+-- Doing Check after one Tile updates
+updateNextTile :: GameState -> MapTile -> MapPos -> GameState
+updateNextTile st@(mp, _, _, _) _ pos
     | pos' == (0,0) = st
     | otherwise     = updateTile st (getTile mp pos') pos'
     where
@@ -131,6 +128,9 @@ processCmd "v" st@(_, _, _, cr) = procCmdMap "fight" (showTuple cr) st
 processCmd "h" st = processCmd "x" st
 processCmd "u" st = processCmd "c" st
 processCmd "y" st = processCmd "v" st
+-- DEV COMMANDS
+processCmd "w" st@(_, _, _, cr) = procCmdMap "/water" (showTuple cr) st
+processCmd "f" st@(_, _, _, cr) = procCmdMap "/fire" (showTuple cr) st
 processCmd _ st = procCmdMap "" "" st
 
 
@@ -151,13 +151,20 @@ procCmdMap "cursor" "down"  (mp, rs, ac, (x,y)) = (mp, rs, ac, (x,y')) where y' 
 procCmdMap "cursor" "right" (mp, rs, ac, (x,y)) = (mp, rs, ac, (x',y)) where x' = if x+1 < fst (mapSize mp) then x+1 else x
 procCmdMap "cursor" "left"  (mp, rs, ac, (x,y)) = (mp, rs, ac, (x',y)) where x' = if x-1 >= 0 then x-1 else x
 
--- (DEV MODE)
--- Spawn Water
-procCmdMap "/w" prm (mp, res, act, cr) = (changeTile mp pos tile', res, act, cr)
+-- Spawn Water (DEV COMMAND)
+procCmdMap "/water" prm (mp, res, act, cr) = (changeTile mp pos tile', res, act, cr)
     where
         pos = strToPos prm
-        (_, tobj, tunit, teff) = getTile mp pos
-        tile' = (Water Fresh, tobj, tunit, teff)
+        (_, to, tu, te) = getTile mp pos
+        tile' = (Water Fresh, to, tu, te)
+
+-- Spawn Fire (DEV COMMAND)
+procCmdMap "/fire" prm (mp, res, act, cr) = (changeTile mp pos tile', res, act, cr)
+    where
+        pos = strToPos prm
+        (tb, to, tu, _) = getTile mp pos
+        tile' = (tb, to, tu, Fire 1)
+
 -- catch-all
 procCmdMap _ _ st = st
 
