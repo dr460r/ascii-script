@@ -34,37 +34,38 @@ updateMap st@(mp, _, _, _) = updateTile st (getTile mp (0,0)) (0,0)
 updateTile :: GameState -> MapTile -> MapPos -> GameState
 
 -- Crop Tile
-updateTile (mp, res, act, cr) (tb, Crop _, tu, te) pos
-    | pos' == (0,0) = st'
-    | otherwise     = updateTile st' (getTile mp pos') pos'
+updateTile (mp, res, act, cr) (tb, Crop _, tu, te) pos = updateNextTile st' pos
     where
         c = cropFertility mp pos
         res' = res + baseCropYield + (if c > 0 then (if c > 4 then 2 else 1) else 0)
         st'  = (changeTile mp pos (tb, Crop c, tu, te), res', act, cr)
-        pos' = nextTilePos mp pos
 
 -- House Tile
-updateTile (mp, rs, ac, cr) (_, House x, _, _) _ = (mp, rs, ac + x, cr)
+updateTile (mp, rs, ac, cr) (_, House x, _, _) pos = updateNextTile st' pos
+    where
+        st' = (mp, rs, ac + x, cr)
 
 -- Fire Tile
-updateTile (mp, rs, ac, cr) (tb, to, tu, Fire fr) pos = (mp', rs, ac, cr)
+updateTile (mp, rs, ac, cr) (tb, to, tu, Fire fr) pos = updateNextTile st' pos
     where 
-        mp' = changeTile mp pos (tb, to, tu, if fr == fireMxLvl then NoEffect else Fire (fr + 1))
+        fr' = fr + 1
+        te' = if fr == fireMxLvl then NoEffect else Fire fr'
+        (to', tu') = if fr' < fireSpreadLvl then (to, tu) else (NoObject, NoUnit) -- to destroy content of tile
+        mp' = changeTile mp pos (tb, to', tu', te')
+        st' = (mp', rs, ac, cr)
 
 -- catch-all
-updateTile st@(mp, _, _, _) _ pos
-    | pos' == (0,0) = st
-    | otherwise     = updateTile st (getTile mp pos') pos'
-    where
-        pos' = nextTilePos mp pos
+updateTile st _ pos = updateNextTile st pos
 
--- Doing Check after one Tile updates
-updateNextTile :: GameState -> MapTile -> MapPos -> GameState
-updateNextTile st@(mp, _, _, _) _ pos
+{- Update Next Tile - Doing Check after one Tile updates -}
+updateNextTile :: GameState -> MapPos -> GameState
+updateNextTile st@(mp, _, _, _) pos -- pos = current position
     | pos' == (0,0) = st
-    | otherwise     = updateTile st (getTile mp pos') pos'
+    | otherwise     = updateTile st tile' pos'
     where
         pos' = nextTilePos mp pos
+        tile' = getTile mp pos'
+
 
 {- Get Position of next Tile -}
 nextTilePos :: Map -> MapPos -> MapPos
@@ -145,6 +146,13 @@ procCmdMap "crop" prm st@(mp, _, _, _) = spawnObject st pos (Crop (cropFertility
 procCmdMap "house" prm st = spawnObject st pos (House housePop) housePrice houseActions
     where pos = strToPos prm
 
+-- Fight Fire (or other disasters)
+procCmdMap "fight" prm (mp, res, act, cr) = (changeTile mp pos tile', res, act, cr)
+    where
+        pos = strToPos prm
+        (tb, to, tu, _) = getTile mp pos
+        tile' = (tb, to, tu, NoEffect)
+
 -- Cursor movements
 procCmdMap "cursor" "up"    (mp, rs, ac, (x,y)) = (mp, rs, ac, (x,y')) where y' = if y-1 >= 0 then y-1 else y
 procCmdMap "cursor" "down"  (mp, rs, ac, (x,y)) = (mp, rs, ac, (x,y')) where y' = if y+1 < snd (mapSize mp) then y+1 else y
@@ -176,6 +184,8 @@ spawnObject st@(mp, res, act, cr) pos obj cost acost = if valid then (changeTile
         tile@(tb, _, tu, te) = getTile mp pos
         tile' = (tb, obj, tu, te)
         valid = tileValidity tile' && res - cost >= 0 && act - acost >= 0 && canBuildOnTile tile
+
+
 
 tileValidity :: MapTile -> Bool
 tileValidity (Land _, NoObject, _, _) = True
