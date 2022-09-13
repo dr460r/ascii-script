@@ -8,13 +8,14 @@ module Game.Data.Map
 , Object (..)
 , Effect (..)
 , Unit (..)
+, GameState
 , initialMap
 , createMap
 , changeTile
 , getTile
 , mapSize
 , hasTerrain
-, GameState
+, setEffectOnPos
 )
 where
 
@@ -25,7 +26,7 @@ data LandType = Arable | NonArable
 data WaterType = Salty | Fresh
 
 data Object = Crop Int | House Int | NoObject
-data Effect = Fire Int | NoEffect
+data Effect = Fire Int Int | NoEffect           -- Fire Level SpreadPower
 data Unit = Rats | NoUnit
 
 type MapTile = (Terrain, Object, Unit, Effect)
@@ -66,9 +67,26 @@ mapSize [] = (0,0)
 mapSize ([]:_) = (0,0)
 mapSize mp = (length $ head mp, length mp)
 
+isPosValid :: Map -> MapPos -> Bool
+isPosValid mp (x,y) = x >= 0 && y >= 0 && x < w && y < h
+    where
+        sz = mapSize mp
+        w = fst sz
+        h = snd sz
+
 hasTerrain :: Terrain -> MapTile -> Bool
 hasTerrain trn (trn', _, _, _) = trn == trn'
 
+setEffectOnPos :: Map -> Effect -> MapPos -> Map
+setEffectOnPos mp ef pos = if isPosValid mp pos && valid then changeTile mp pos tile' else mp
+    where
+        tile@(tb, to, tu, _) = getTile mp pos
+        tile' = (tb, to, tu, ef)
+        valid = canSetEffectOnTile tile
+
+canSetEffectOnTile :: MapTile -> Bool
+canSetEffectOnTile (Land _, _, _, NoEffect) = True
+canSetEffectOnTile (_, _, _, _) = False
 
 {- Map creation -}
 

@@ -90,7 +90,7 @@ renderText s = do
 setColor :: MapTile -> IO ()
 
 -- Fire
-setColor (_, _, _, Fire _) = do
+setColor (_, _, _, Fire _ _) = do
     setSGR [SetColor Background Vivid Red]
     setSGR [SetColor Foreground Vivid Yellow]
 
@@ -132,10 +132,10 @@ setColor _ = resetColor
 strForTile :: MapTile -> String
 
 -- Crop
-strForTile (_, _, _, Fire x)
+strForTile (_, _, _, Fire x _)
         | x == 1 || x == fireMxLvl       = ",,"
-        | x == 2 || x == (fireMxLvl - 1) = "ff"
-        | otherwise = "$$"
+        | x == 2 || x == (fireMxLvl - 1) = "vv"
+        | otherwise = "MM"
 strForTile (_, Crop x, _, _)
         | x == 0    = ";;"
         | x < 5     = "ii"

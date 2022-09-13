@@ -2,6 +2,7 @@ module Game.Config
 ( 
   fireMxLvl
 , fireSpreadLvl
+, fireSpreadDistance
 
 , cropPrice
 , cropActons
@@ -10,11 +11,14 @@ module Game.Config
 , housePop
 , housePrice
 , houseActions
+
+, backupActions
 )
 where
 
 fireMxLvl :: Int
 fireSpreadLvl :: Int
+fireSpreadDistance :: Int
 
 cropPrice :: Int
 cropActons :: Int
@@ -27,6 +31,7 @@ houseActions :: Int
 {- Fire -}
 fireMxLvl = 7       -- Must be at least 5
 fireSpreadLvl = 3   -- Must be less-equal tnen fireMxLvl
+fireSpreadDistance = 3
 
 {- Crop -}
 cropPrice = 50
@@ -37,3 +42,7 @@ baseCropYield = 1
 housePop = 5
 housePrice = 500
 houseActions = 1
+
+{- General -}
+backupActions :: Int
+backupActions = 1

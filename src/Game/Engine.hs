@@ -33,6 +33,24 @@ updateMap st@(mp, _, _, _) = updateTile st (getTile mp (0,0)) (0,0)
 {- Update Tiles Recursively -}
 updateTile :: GameState -> MapTile -> MapPos -> GameState
 
+-- Fire Tile
+updateTile (mp, rs, ac, cr) (tb, to, tu, Fire fr pw) pos@(x,y) = updateNextTile st' pos
+    where 
+        pw' = if pw > 0 then pw - 1 else 0
+        fr' = fr + 1
+        te' = if fr == fireMxLvl then NoEffect else Fire fr' pw
+        (to', tu') = if fr' < fireSpreadLvl then (to, tu) else (NoObject, NoUnit) -- to destroy content of tile
+        mp0 = changeTile mp pos (tb, to', tu', te')
+        
+        -- only if needs to spread
+        spread = pw > 0 && fr == fireSpreadLvl
+        mp1 = if spread then setEffectOnPos mp0 (Fire 0 pw') (x+1,y) else mp0
+        mp2 = if spread then setEffectOnPos mp1 (Fire 1 pw') (x-1,y) else mp1
+        mp3 = if spread then setEffectOnPos mp2 (Fire 0 pw') (x,y+1) else mp2
+        mp4 = if spread then setEffectOnPos mp3 (Fire 1 pw') (x,y-1) else mp3
+        
+        st' = (mp4, rs, ac, cr)
+
 -- Crop Tile
 updateTile (mp, res, act, cr) (tb, Crop _, tu, te) pos = updateNextTile st' pos
     where
@@ -45,22 +63,14 @@ updateTile (mp, rs, ac, cr) (_, House x, _, _) pos = updateNextTile st' pos
     where
         st' = (mp, rs, ac + x, cr)
 
--- Fire Tile
-updateTile (mp, rs, ac, cr) (tb, to, tu, Fire fr) pos = updateNextTile st' pos
-    where 
-        fr' = fr + 1
-        te' = if fr == fireMxLvl then NoEffect else Fire fr'
-        (to', tu') = if fr' < fireSpreadLvl then (to, tu) else (NoObject, NoUnit) -- to destroy content of tile
-        mp' = changeTile mp pos (tb, to', tu', te')
-        st' = (mp', rs, ac, cr)
 
 -- catch-all
 updateTile st _ pos = updateNextTile st pos
 
 {- Update Next Tile - Doing Check after one Tile updates -}
 updateNextTile :: GameState -> MapPos -> GameState
-updateNextTile st@(mp, _, _, _) pos -- pos = current position
-    | pos' == (0,0) = st
+updateNextTile st@(mp, rs, ac, cr) pos -- pos = current position
+    | pos' == (0,0) = if ac == 0 then (mp, rs, backupActions, cr) else st -- if there is no house use backupActions
     | otherwise     = updateTile st tile' pos'
     where
         pos' = nextTilePos mp pos
@@ -171,7 +181,9 @@ procCmdMap "/fire" prm (mp, res, act, cr) = (changeTile mp pos tile', res, act, 
     where
         pos = strToPos prm
         (tb, to, tu, _) = getTile mp pos
-        tile' = (tb, to, tu, Fire 1)
+        tile' = (tb, to, tu, Fire 1 fireSpreadDistance)
+        -- (tb, _, _, _) = getTile mp pos
+        -- tile' = (tb, NoObject, NoUnit, Fire 1 fireSpreadDistance)
 
 -- catch-all
 procCmdMap _ _ st = st
