@@ -110,12 +110,25 @@ getKey = reverse <$> getKey' ""
 
 {- Process cmd -}
 processCmd :: String -> GameState -> GameState
-processCmd "\n" (m, r, _, c) = passTime (m, r, 0, c)
-processCmd "\ESC[A" st = procCmdMap "cursor" "up" st
-processCmd "\ESC[B" st = procCmdMap "cursor" "down" st
-processCmd "\ESC[C" st = procCmdMap "cursor" "right" st
-processCmd "\ESC[D" st = procCmdMap "cursor" "left" st
-processCmd "c" st@(_, _, _, cr) = procCmdMap "crop" (show (fst cr) ++ "," ++ show (snd cr)) st
+-- Next Turn (Pass time)
+processCmd " " (m, r, _, c) = passTime (m, r, 0, c)
+processCmd "\n" st = processCmd " " st -- alternative (Linux only)
+-- Cursor movement
+processCmd "i" st = procCmdMap "cursor" "up" st
+processCmd "k" st = procCmdMap "cursor" "down" st
+processCmd "l" st = procCmdMap "cursor" "right" st
+processCmd "j" st = procCmdMap "cursor" "left" st
+-- alternatives (Arrows - Linux only)
+processCmd "\ESC[A" st = processCmd "i" st
+processCmd "\ESC[B" st = processCmd "k" st
+processCmd "\ESC[C" st = processCmd "l" st
+processCmd "\ESC[D" st = processCmd "j" st
+processCmd "w" st = processCmd "i" st
+processCmd "s" st = processCmd "k" st
+processCmd "d" st = processCmd "l" st
+processCmd "a" st = processCmd "j" st
+-- Other Actions
+processCmd "u" st@(_, _, _, cr) = procCmdMap "crop" (show (fst cr) ++ "," ++ show (snd cr)) st
 processCmd "h" st@(_, _, _, cr) = procCmdMap "house" (show (fst cr) ++ "," ++ show (snd cr)) st
 processCmd _ st = procCmdMap "" "" st
 
