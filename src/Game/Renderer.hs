@@ -52,13 +52,12 @@ render (mp, res, act, cr) = do
     renderText $ "  - Crop fields $ yield: [;;] 0.1, [ii] 0.2, [ll] 0.3" ++ "\n"
     renderText "\n"
     renderText $ "> MAN-POWER (#) is used for performing ACTIONS" ++ "\n"
-    renderText $ "  - Every turn # resets to value that is proportional to number of HOUSES built" ++ "\n"
+    renderText $ "  - Every turn # resets to value that is proportional to \n    number of HOUSES built" ++ "\n"
     renderText $ "  - Each house provides 5 #" ++ "\n"
     renderText "\n"
 
     renderText $ " Available ACTIONS" ++ "\n"
     renderKeyMappings
-    renderText "\n"
 
     --renderText "(everything is placed on the tile where is cursor currently)\n"
 
@@ -80,7 +79,7 @@ renderKeyMappings = do
     let rows = transpose cols
 
     let txt = mkTbl rows lens
-    renderText $ txt ++ "\n\n"
+    renderText $ txt
 
 -- Standardize length (add spaces so every string is of same length)
 stdLen :: [String] -> ([String], Int)
