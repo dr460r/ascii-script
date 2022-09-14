@@ -23,6 +23,7 @@ dependencies:
 - base >= 4.7 && < 5
 - ansi-terminal
 - split
+- random
 
 ghc-options:
 - -Wall

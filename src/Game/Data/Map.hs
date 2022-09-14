@@ -16,6 +16,7 @@ module Game.Data.Map
 , mapSize
 , hasTerrain
 , setEffectOnPos
+, canSetEffectOnTile
 )
 where
 
@@ -87,11 +88,11 @@ setEffectOnPos mp ef pos = if isPosValid mp pos && valid then changeTile mp pos 
     where
         tile@(tb, to, tu, _) = getTile mp pos
         tile' = (tb, to, tu, ef)
-        valid = canSetEffectOnTile tile
+        valid = canSetEffectOnTile tile (Fire 0 0)
 
-canSetEffectOnTile :: MapTile -> Bool
-canSetEffectOnTile (Land _, _, _, NoEffect) = True
-canSetEffectOnTile (_, _, _, _) = False
+canSetEffectOnTile :: MapTile -> Effect -> Bool
+canSetEffectOnTile (Land _, _, _, NoEffect) (Fire _ _) = True
+canSetEffectOnTile (_, _, _, _) _ = False
 
 {- Map creation -}
 

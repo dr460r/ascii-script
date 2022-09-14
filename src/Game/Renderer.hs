@@ -1,5 +1,7 @@
 module Game.Renderer
-( render )
+( render
+, renderText
+)
 where
 
 import System.Console.ANSI

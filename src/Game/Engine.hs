@@ -4,20 +4,37 @@ module Game.Engine
 where
 
 import System.IO ( stdin, hReady )
+import System.Random
 import Data.List.Split ( splitOn )
 
 import Game.Data.Map
 import Game.Config
-import Game.Renderer ( render )
+import Game.Renderer ( render, renderText )
 
 
 {- Main Loop -}
 update :: GameState -> String -> IO ()
-update st com = do
-    let st' = processCmd com st
-    render st'
+update st@(mp, _, _, _) com = do
+    
+    -- fire spawning
+    let sz = mapSize mp
+    let tmtospawn = com == " "
+    rx <- if tmtospawn then rnd else pure 0
+    ry <- if tmtospawn then rnd else pure 0
+    rf <- if tmtospawn then rnd else pure 0
+    let rxi = abs rx `mod` fst sz -- fire x pos
+    let ryi = abs ry `mod` snd sz -- fire y pos
+    let rfi = if tmtospawn then abs rf `mod` 100 else 100 -- to spawn fire, random percent (if 100 it would not spawn in any case)
+    let tospawnf = rfi < fireSpawnChance && canSetEffectOnTile (getTile mp (rxi, ryi)) (Fire 0 0) -- check if fire should spawn (rfi ok and can set fire effect on tile)
+    let st' = if tospawnf then procCmdMap "/fire" (showTuple (rxi,ryi)) st else st
+    
+    -- process cmd from last stackframe
+    let st'' = processCmd com st'
+    render st''
+
+    -- wait for cmd
     com' <- getKey
-    update st' com'
+    update st'' com'
 
 
 {-== Game State Update Logic ==-}
@@ -201,6 +218,7 @@ spawnObject st@(mp, res, act, cr) pos obj cost acost = if valid then (changeTile
 
 
 tileValidity :: MapTile -> Bool
+tileValidity (Land _, _, _, Fire _ _) = True
 tileValidity (Land _, NoObject, _, _) = True
 tileValidity (Water _, NoObject, _, _) = True
 tileValidity (Land Arable, Crop _, _, _) = True
@@ -211,22 +229,31 @@ canBuildOnTile :: MapTile -> Bool
 canBuildOnTile (_, NoObject, _, _) = True
 canBuildOnTile (_, _, _, _) = False
 
--- " abc  " -> "abc"
-trim :: String -> String
-trim = unwords . words
-
--- "3, 5" -> (3,5)
-strToPos :: String -> MapPos
-strToPos s = (rdtr (head ar) :: Int, rdtr (ar !! 1) :: Int)
-            where ar = splitOn "," s; rdtr = read . trim
-
 
 {-== Crop Utils ==-}
 cropFertility :: Map -> MapPos -> Int
 cropFertility mp pos = countSurrTiles mp pos (hasTerrain (Water Fresh))
 
 
+{-== World Behaviour ==-}
+
+-- doWorldEvents :: GameState -> GameState
+-- doWorldEvents st = do
+
+--maybeRandomSpawnFire :: Map -> Map
+
+
+
 {-== Utils ==-}
+
+-- " abc  " -> "abc"
+trim :: String -> String
+trim = unwords . words
+
+-- "3,5" -> (3,5)
+strToPos :: String -> MapPos
+strToPos s = (rdtr (head ar) :: Int, rdtr (ar !! 1) :: Int)
+            where ar = splitOn "," s; rdtr = read . trim
 
 bti :: Bool -> Int
 bti True = 1
@@ -234,3 +261,6 @@ bti False = 0
 
 showTuple :: Show a => (a,a) -> String
 showTuple (x,y) = show x ++ "," ++ show y
+
+rnd :: IO Int
+rnd = randomIO :: IO Int
