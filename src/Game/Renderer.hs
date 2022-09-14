@@ -42,7 +42,7 @@ render (mp, res, act, cr) = do
     let w = fst (mapSize mp)
     renderResAct res act
     renderText "\n"
-    renderText $ "Press [Space] key for NEXT TURN" ++ "\n\n"
+    renderText $ "Press [Space] key for NEXT TURN" ++ "\n\n\n"
     
     let infotitle = " INFO "
     renderText $ hline "*" (w - 3) ++ infotitle ++ hline "*" (w - 3) ++ "\n\n"
@@ -56,6 +56,7 @@ render (mp, res, act, cr) = do
     renderText $ "  - Each house provides 5 #" ++ "\n"
     renderText "\n"
 
+    renderText $ " Available ACTIONS" ++ "\n"
     renderKeyMappings
     renderText "\n"
 
