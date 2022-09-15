@@ -9,7 +9,7 @@ import Data.List.Split ( splitOn )
 
 import Game.Data.Map
 import Game.Config
-import Game.Renderer ( render, renderText )
+import Game.Renderer ( render )
 
 
 {- Main Loop -}
@@ -199,7 +199,7 @@ procCmdMap "/fire" prm (mp, res, act, cr) = (changeTile mp pos tile', res, act, 
     where
         pos = strToPos prm
         (tb, to, tu, _) = getTile mp pos
-        tile' = (tb, to, tu, Fire 1 fireSpreadDistance)
+        tile' = (tb, to, tu, Fire 0 fireSpreadDistance)
         -- (tb, _, _, _) = getTile mp pos
         -- tile' = (tb, NoObject, NoUnit, Fire 1 fireSpreadDistance)
 
