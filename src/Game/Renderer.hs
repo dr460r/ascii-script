@@ -37,13 +37,12 @@ render (mp, res, act, cr) = do
     clearTerminal
 
     renderMap mp cr
-    renderText "\n"
 
-    let w = fst (mapSize mp)
     renderResAct res act
     renderText "\n"
     renderText $ "Press [Space] key for NEXT TURN" ++ "\n\n\n"
     
+    let w = fst (mapSize mp)
     let infotitle = " INFO "
     renderText $ hline "*" (w - 3) ++ infotitle ++ hline "*" (w - 3) ++ "\n\n"
     
@@ -58,8 +57,6 @@ render (mp, res, act, cr) = do
 
     renderText $ " Available ACTIONS" ++ "\n"
     renderKeyMappings
-
-    --renderText "(everything is placed on the tile where is cursor currently)\n"
 
 
 renderResAct :: Int -> Int -> IO () -- └ ┘ ┼ ─ ┴ ├ ┤ ┬ ┌ ┐ │
