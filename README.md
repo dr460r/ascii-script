@@ -7,11 +7,15 @@ Tiny terminal based game about building civilization and fighting natural disast
 
 ![Info](./screenshot-02.png)
 
-## Required to run the game
-- ANSI-compatible terminal emulator
+## Run the game
 
-## Info
-### My environment for development
+Download executable: [Releases](https://github.com/dr460r/asciiv/releases)
+
+To run the game you need ANSI-compatible terminal emulator.
+
+## Development
+
+My dev setup:
 - OS: GNU/Linux
-- Haskell project manager: Stack
+- Haskell project manager: [Stack](https://docs.haskellstack.org/en/stable/)
 - IDE: VSCodium + Haskell extensions
